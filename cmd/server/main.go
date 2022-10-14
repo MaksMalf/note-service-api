@@ -6,7 +6,8 @@ import (
 	"net"
 
 	"github.com/MaksMalf/test_gRPC/internal/app/api/note_v1"
-	desc "github.com/MaksMalf/test_gRPC/pkg/note_v1"
+	pb "github.com/MaksMalf/test_gRPC/pkg/note_v1"
+
 	"google.golang.org/grpc"
 )
 
@@ -19,7 +20,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	desc.RegisterNoteV1Server(s, note_v1.NewNote())
+	pb.RegisterNoteV1Server(s, note_v1.NewNote())
 
 	fmt.Println("server run on port: %s", port)
 

@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
-	desc "github.com/MaksMalf/test_gRPC/pkg/note_v1"
-	"google.golang.org/grpc"
 	"log"
+
+	pb "github.com/MaksMalf/test_gRPC/pkg/note_v1"
+
+	"google.golang.org/grpc"
 )
 
 const adress = "localhost:50051"
@@ -16,38 +18,48 @@ func main() {
 	}
 	defer con.Close()
 
-	client := desc.NewNoteV1Client(con)
+	client := pb.NewNoteV1Client(con)
 
-	res, err := client.CreateNote(context.Background(), &desc.CreateNoteRequest{
+	res, err := client.CreateNote(context.Background(), &pb.CreateNoteRequest{
 		Title:  "Wow!",
 		Text:   "I'm surprised",
 		Author: "Max",
 	})
-
-	res1, err := client.GetNote(context.Background(), &desc.GetNoteRequest{
-		Id: 1,
-	})
-
-	res2, err := client.GetListNote(context.Background(), &desc.GetListNoteRequest{
-		GetAll: "Get list all",
-	})
-
-	res3, err := client.UpdateNote(context.Background(), &desc.UpdateNoteRequest{
-		Id:    1,
-		Title: "New Title",
-	})
-
-	res4, err := client.DeleteNote(context.Background(), &desc.DeleteNoteRequest{
-		Id: 1,
-	})
-
 	if err != nil {
 		log.Println(err.Error())
 	}
-
 	log.Println("CreateNote ID:", res.GetId())
+
+	res1, err := client.GetNote(context.Background(), &pb.GetNoteRequest{
+		Id: 1,
+	})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	log.Println("GetNote Author:", res1.GetAuthor())
+
+	res2, err := client.GetListNote(context.Background(), &pb.GetListNoteRequest{
+		GetAll: "Get list all",
+	})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	log.Println("GetListNote Title:", res2.GetAllList())
+
+	res3, err := client.UpdateNote(context.Background(), &pb.UpdateNoteRequest{
+		Id:    1,
+		Title: "New Title",
+	})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	log.Println("UpdateNote Title:", res3.GetNewTitle())
+
+	res4, err := client.DeleteNote(context.Background(), &pb.DeleteNoteRequest{
+		Id: 1,
+	})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	log.Println("DeleteNote Message:", res4.GetDelNote())
 }
