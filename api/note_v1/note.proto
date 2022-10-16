@@ -7,10 +7,12 @@ option go_package = "github.com/MaksMalf/test_gRPC/pkg/note_v1";
 service NoteV1 {
   rpc CreateNote (CreateNoteRequest) returns (CreateNoteResponce);
   rpc GetNote (GetNoteRequest) returns (GetNoteResponce);
-  rpc GetListNote (GetListNoteRequest) returns (GetListNoteResponce);
+  rpc GetListNote (Empty) returns (GetListNoteResponce);
   rpc UpdateNote (UpdateNoteRequest) returns (UpdateNoteResponce);
-  rpc DeleteNote (DeleteNoteRequest) returns (DeleteNoteResponce);
+  rpc DeleteNote (DeleteNoteRequest) returns (Empty);
 }
+
+message Empty {}
 
 message CreateNoteRequest {
   string title = 1;
@@ -32,17 +34,25 @@ message GetNoteResponce {
   string author = 3;
 }
 
-message GetListNoteRequest {
-  string getAll = 1;
-}
-
 message GetListNoteResponce {
-  string allList = 1;
+  message Result {
+    message Note {
+      int64 id = 1;
+      string title = 2;
+      string text = 3;
+      string author = 4;
+    }
+
+    repeated Note notes = 1;
+  }
+  Result result = 1;
 }
 
 message UpdateNoteRequest {
   int64 id = 1;
   string title = 2;
+  string text = 3;
+  string author = 4;
 }
 
 message UpdateNoteResponce {
@@ -51,8 +61,4 @@ message UpdateNoteResponce {
 
 message DeleteNoteRequest {
   int64 id = 1;
-}
-
-message DeleteNoteResponce {
-  string delNote = 1;
 }
