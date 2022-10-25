@@ -1,15 +1,17 @@
 package note_v1
 
-import pb "github.com/MaksMalf/test_gRPC/pkg/note_v1"
+import (
+	"github.com/MaksMalf/testGrpc/internal/app/service/note"
+	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
+)
 
-type Note struct {
-	Id     int64  `db:"id"`
-	Title  string `db:"title"`
-	Text   string `db:"text"`
-	Author string `db:"author"`
+type Implementation struct {
 	pb.UnimplementedNoteV1Server
+	noteService *note.Service
 }
 
-func NewNote() *Note {
-	return &Note{}
+func NewNote(noteService *note.Service) *Implementation {
+	return &Implementation{
+		noteService: noteService,
+	}
 }

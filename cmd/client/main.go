@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
-	pb "github.com/MaksMalf/test_gRPC/pkg/note_v1"
-
+	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 const adress = "localhost:50051"
@@ -20,7 +20,7 @@ func main() {
 
 	client := pb.NewNoteV1Client(con)
 
-	// Create
+	//Create
 	res, err := client.CreateNote(context.Background(), &pb.CreateNoteRequest{
 		Title:  "Wow!",
 		Text:   "I'm surprised",
@@ -29,38 +29,39 @@ func main() {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Println("CreateNote ID:", res.GetId())
+	log.Println("CreateNote ID:", res.GetResult().GetId())
 
-	// Get
+	//Get
 	res1, err := client.GetNote(context.Background(), &pb.GetNoteRequest{
-		Id: 6,
+		Id: 2,
 	})
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Println("GetNote Author:", res1.GetAuthor())
+	log.Println("GetNote:\n", res1.GetResult())
 
 	//Get all
-	res2, err := client.GetListNote(context.Background(), &pb.Empty{})
+	res2, err := client.GetListNote(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Println("GetListNote Title:", res2.GetResult())
+	log.Println("GetListNote:\n", res2.GetResult().GetNotes())
 
 	// Update
-	res3, err := client.UpdateNote(context.Background(), &pb.UpdateNoteRequest{
-		Id:     2,
+	if _, err = client.UpdateNote(context.Background(), &pb.UpdateNoteRequest{
+		Id:     6,
 		Title:  "NewTitle",
 		Text:   "NewText",
 		Author: "NewMax",
-	})
-	if err != nil {
+	}); err != nil {
 		log.Println(err.Error())
 	}
-	log.Println(res3.GetNewTitle())
+	log.Println("Update note")
 
 	// Delete
-	if _, err := client.DeleteNote(context.Background(), &pb.DeleteNoteRequest{Id: 8}); err != nil {
+	if _, err = client.DeleteNote(context.Background(), &pb.DeleteNoteRequest{
+		Id: 10,
+	}); err != nil {
 		log.Println(err.Error())
 	}
 	log.Println("Table deleted")

@@ -2,39 +2,17 @@ package note_v1
 
 import (
 	"context"
-	"fmt"
 
-	pb "github.com/MaksMalf/test_gRPC/pkg/note_v1"
-	//sq "github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
+	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (n *Note) DeleteNote(ctx context.Context, req *pb.DeleteNoteRequest) (*pb.Empty, error) {
-	dbDsn := fmt.Sprintf(
-		"host=%s port=%s dbname=%s user=%s password=%s sslmode=%s",
-		host, port, dbName, dbUser, dbPassword, sslMode,
-	)
-
-	db, err := sqlx.Open("pgx", dbDsn)
+func (i *Implementation) DeleteNote(ctx context.Context, req *pb.DeleteNoteRequest) (*emptypb.Empty, error) {
+	res, err := i.noteService.DeleteNote(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 
-	//builder := sq.Delete(noteTable).
-	//	PlaceholderFormat(sq.Dollar).
-	//	Where(sq.Eq{"id": req.GetId()})
-	//
-	//query, args, err := builder.ToSql()
-	//if err != nil {
-	//	return nil, err
-	//}
+	return res, nil
 
-	row, err := db.QueryContext(ctx, "DELETE FROM note WHERE id = $1", req.GetId())
-	if err != nil {
-		return nil, err
-	}
-	defer row.Close()
-
-	return &pb.Empty{}, nil
 }

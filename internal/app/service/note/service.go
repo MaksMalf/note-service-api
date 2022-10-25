@@ -1,6 +1,6 @@
 package note
 
-import "github.com/MaksMalf/testGrpc/internal/storage"
+import "github.com/MaksMalf/testGrpc/internal/app/storage"
 
 type Service struct {
 	noteStorage storage.NoteStorage
