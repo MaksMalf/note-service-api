@@ -20,6 +20,7 @@ func main() {
 
 	client := pb.NewNoteV1Client(con)
 
+	// Create
 	res, err := client.CreateNote(context.Background(), &pb.CreateNoteRequest{
 		Title:  "Wow!",
 		Text:   "I'm surprised",
@@ -30,36 +31,37 @@ func main() {
 	}
 	log.Println("CreateNote ID:", res.GetId())
 
+	// Get
 	res1, err := client.GetNote(context.Background(), &pb.GetNoteRequest{
-		Id: 1,
+		Id: 6,
 	})
 	if err != nil {
 		log.Println(err.Error())
 	}
 	log.Println("GetNote Author:", res1.GetAuthor())
 
-	res2, err := client.GetListNote(context.Background(), &pb.GetListNoteRequest{
-		GetAll: "Get list all",
-	})
+	//Get all
+	res2, err := client.GetListNote(context.Background(), &pb.Empty{})
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Println("GetListNote Title:", res2.GetAllList())
+	log.Println("GetListNote Title:", res2.GetResult())
 
+	// Update
 	res3, err := client.UpdateNote(context.Background(), &pb.UpdateNoteRequest{
-		Id:    1,
-		Title: "New Title",
+		Id:     2,
+		Title:  "NewTitle",
+		Text:   "NewText",
+		Author: "NewMax",
 	})
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Println("UpdateNote Title:", res3.GetNewTitle())
+	log.Println(res3.GetNewTitle())
 
-	res4, err := client.DeleteNote(context.Background(), &pb.DeleteNoteRequest{
-		Id: 1,
-	})
-	if err != nil {
+	// Delete
+	if _, err := client.DeleteNote(context.Background(), &pb.DeleteNoteRequest{Id: 8}); err != nil {
 		log.Println(err.Error())
 	}
-	log.Println("DeleteNote Message:", res4.GetDelNote())
+	log.Println("Table deleted")
 }
