@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 
+	"github.com/MaksMalf/testGrpc/internal/app/api/converter"
+	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 const adress = "localhost:50051"
@@ -21,38 +23,42 @@ func main() {
 	client := pb.NewNoteV1Client(con)
 
 	//Create
-	res, err := client.CreateNote(context.Background(), &pb.CreateNoteRequest{
-		Title:  "Wow!",
-		Text:   "I'm surprised",
-		Author: "Max",
-	})
-	if err != nil {
-		log.Println(err.Error())
-	}
-	log.Println("CreateNote ID:", res.GetResult().GetId())
+	//res, err := client.CreateNote(context.Background(), &pb.CreateNoteRequest{
+	//	Info: converter.ToPbNoteInfo(&model.NoteInfo{
+	//		Title:  "Ready",
+	//		Text:   "Gogogogo",
+	//		Author: "Maximus",
+	//	}),
+	//})
+	//if err != nil {
+	//	log.Println(err.Error())
+	//}
+	//log.Println("CreateNote ID:", res.GetId())
 
 	//Get
-	res1, err := client.GetNote(context.Background(), &pb.GetNoteRequest{
-		Id: 2,
-	})
-	if err != nil {
-		log.Println(err.Error())
-	}
-	log.Println("GetNote:\n", res1.GetResult())
+	//res1, err := client.GetNote(context.Background(), &pb.GetNoteRequest{
+	//	Id: 2,
+	//})
+	//if err != nil {
+	//	log.Println(err.Error())
+	//}
+	//log.Println("GetNote:\n", res1.GetNote())
 
 	//Get all
-	res2, err := client.GetListNote(context.Background(), &emptypb.Empty{})
-	if err != nil {
-		log.Println(err.Error())
-	}
-	log.Println("GetListNote:\n", res2.GetResult().GetNotes())
+	//res2, err := client.GetListNote(context.Background(), &emptypb.Empty{})
+	//if err != nil {
+	//	log.Println(err.Error())
+	//}
+	//log.Println("GetListNote:\n", res2.GetNotes())
 
 	// Update
 	if _, err = client.UpdateNote(context.Background(), &pb.UpdateNoteRequest{
-		Id:     6,
-		Title:  "NewTitle",
-		Text:   "NewText",
-		Author: "NewMax",
+		Id: 16,
+		UpdateInfo: converter.TpPbUpdateNoteInfo(&model.UpdateNoteInfo{
+			Title:  sql.NullString{String: "Hey"},
+			Text:   sql.NullString{String: "Update"},
+			Author: sql.NullString{String: "New Maximus"},
+		}),
 	}); err != nil {
 		log.Println(err.Error())
 	}
@@ -60,7 +66,7 @@ func main() {
 
 	// Delete
 	if _, err = client.DeleteNote(context.Background(), &pb.DeleteNoteRequest{
-		Id: 10,
+		Id: 9,
 	}); err != nil {
 		log.Println(err.Error())
 	}

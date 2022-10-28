@@ -3,10 +3,11 @@ package storage
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
+	"github.com/MaksMalf/testGrpc/internal/pkg/db"
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
 )
 
 const Note = "note"
@@ -14,17 +15,17 @@ const Note = "note"
 type NoteStorage interface {
 	CreateNote(ctx context.Context, note *model.NoteInfo) (int64, error)
 	DeleteNote(ctx context.Context, noteID int64) error
-	GetNote(ctx context.Context, noteID int64) (*model.NoteInfo, error)
-	GetListNote(ctx context.Context) ([]*model.NoteInfo, error)
-	UpdateNote(ctx context.Context, note *model.NoteInfo) error
+	GetNote(ctx context.Context, noteID int64) (*model.Note, error)
+	GetListNote(ctx context.Context) ([]*model.Note, error)
+	UpdateNote(ctx context.Context, id int64, note *model.UpdateNoteInfo) error
 }
 
 type storage struct {
-	db *sqlx.DB
+	client db.Client
 }
 
-func NewNoteStorage(db *sqlx.DB) NoteStorage {
-	return &storage{db: db}
+func NewNoteStorage(client db.Client) NoteStorage {
+	return &storage{client: client}
 }
 
 func (s *storage) CreateNote(ctx context.Context, note *model.NoteInfo) (int64, error) {
@@ -39,7 +40,12 @@ func (s *storage) CreateNote(ctx context.Context, note *model.NoteInfo) (int64, 
 		return 0, err
 	}
 
-	row, err := s.db.QueryContext(ctx, query, args...)
+	q := db.Query{
+		Name:     "CreateNote",
+		QueryRaw: query,
+	}
+
+	row, err := s.client.DB().QueryContext(ctx, q, args...)
 	if err != nil {
 		return 0, err
 	}
@@ -65,16 +71,20 @@ func (s *storage) DeleteNote(ctx context.Context, noteID int64) error {
 		return err
 	}
 
-	row, err := s.db.QueryContext(ctx, query, args...)
+	q := db.Query{
+		Name:     "DeleteNote",
+		QueryRaw: query,
+	}
+
+	_, err = s.client.DB().ExecContext(ctx, q, args...)
 	if err != nil {
 		return err
 	}
-	defer row.Close()
 
 	return nil
 }
 
-func (s *storage) GetNote(ctx context.Context, noteID int64) (*model.NoteInfo, error) {
+func (s *storage) GetNote(ctx context.Context, noteID int64) (*model.Note, error) {
 	builder := sq.Select("title, text, author").
 		PlaceholderFormat(sq.Dollar).
 		From(Note).
@@ -86,8 +96,13 @@ func (s *storage) GetNote(ctx context.Context, noteID int64) (*model.NoteInfo, e
 		return nil, err
 	}
 
-	var res []*model.NoteInfo
-	err = s.db.SelectContext(ctx, &res, query, args...)
+	q := db.Query{
+		Name:     "GetNote",
+		QueryRaw: query,
+	}
+
+	var res []*model.Note
+	err = s.client.DB().GetContext(ctx, &res, q, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +113,7 @@ func (s *storage) GetNote(ctx context.Context, noteID int64) (*model.NoteInfo, e
 	return res[0], nil
 }
 
-func (s *storage) GetListNote(ctx context.Context) ([]*model.NoteInfo, error) {
+func (s *storage) GetListNote(ctx context.Context) ([]*model.Note, error) {
 	builder := sq.Select("id, title, text, author").
 		PlaceholderFormat(sq.Dollar).
 		From(Note)
@@ -108,33 +123,43 @@ func (s *storage) GetListNote(ctx context.Context) ([]*model.NoteInfo, error) {
 		return nil, err
 	}
 
-	var noteInfo []*model.NoteInfo
-	err = s.db.SelectContext(ctx, &noteInfo, query, args...)
+	q := db.Query{
+		Name:     "GetListNote",
+		QueryRaw: query,
+	}
+
+	var notes []*model.Note
+	err = s.client.DB().SelectContext(ctx, &notes, q, args...)
 	if err != nil {
 		return nil, err
 	}
 
-	return noteInfo, nil
+	return notes, nil
 }
 
-func (s *storage) UpdateNote(ctx context.Context, note *model.NoteInfo) error {
+func (s *storage) UpdateNote(ctx context.Context, id int64, note *model.UpdateNoteInfo) error {
 	builder := sq.Update(Note).
 		PlaceholderFormat(sq.Dollar).
-		Set("title", note.Title).
-		Set("text", note.Text).
-		Set("author", note.Author).
-		Where(sq.Eq{"id": note.Id})
+		Set("update_at", time.Now()).
+		Set("title", note.Title.String).
+		Set("text", note.Text.String).
+		Set("author", note.Author.String).
+		Where(sq.Eq{"id": id})
 
 	query, args, err := builder.ToSql()
 	if err != nil {
 		return err
 	}
 
-	row, err := s.db.QueryContext(ctx, query, args...)
+	q := db.Query{
+		Name:     "UpdateNote",
+		QueryRaw: query,
+	}
+
+	_, err = s.client.DB().ExecContext(ctx, q, args...)
 	if err != nil {
 		return err
 	}
-	defer row.Close()
 
 	return nil
 }

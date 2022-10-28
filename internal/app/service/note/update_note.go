@@ -6,6 +6,6 @@ import (
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 )
 
-func (s *Service) UpdateNote(ctx context.Context, note *model.NoteInfo) error {
-	return s.noteStorage.UpdateNote(ctx, note)
+func (s *Service) UpdateNote(ctx context.Context, id int64, note *model.UpdateNoteInfo) error {
+	return s.noteStorage.UpdateNote(ctx, id, note)
 }

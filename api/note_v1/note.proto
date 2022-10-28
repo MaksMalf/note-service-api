@@ -4,6 +4,8 @@ package api.note_v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/MaksMalf/testGrpc/pkg/note_v1";
@@ -38,18 +40,31 @@ service NoteV1 {
   }
 }
 
-message CreateNoteRequest {
+message NoteInfo {
   string title = 1 [json_name = "title", (validate.rules).string = {min_len: 1, max_len: 30}];
   string text = 2;
   string author = 3 [json_name = "author", (validate.rules).string = {min_len: 1, max_len: 20}];
 }
 
-message CreateNoteResponce {
-  message Result {
-    int64 id = 1;
-  }
+message Note {
+  int64 id = 1;
+  NoteInfo info = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp update_at = 4;
+}
 
-  Result result = 1;
+message UpdateNoteInfo {
+  google.protobuf.StringValue title = 1;
+  google.protobuf.StringValue text = 2;
+  google.protobuf.StringValue author = 3;
+}
+
+message CreateNoteRequest {
+  NoteInfo info = 1;
+}
+
+message CreateNoteResponce {
+  int64 id = 1;
 }
 
 message GetNoteRequest {
@@ -57,36 +72,16 @@ message GetNoteRequest {
 }
 
 message GetNoteResponce {
-  message Note {
-    int64 id = 1;
-    string title = 2;
-    string text = 3;
-    string author = 4;
-  }
-
-  Note result = 1;
+  Note note = 1;
 }
 
 message GetListNoteResponce {
-  message Result {
-    message Note {
-      int64 id = 1;
-      string title = 2;
-      string text = 3;
-      string author = 4;
-    }
-
-    repeated Note notes = 1;
-  }
-
-  Result result = 1;
+  repeated Note notes = 1;
 }
 
 message UpdateNoteRequest {
-  int64 id = 1 [json_name = "id", (validate.rules).int64.gt = 0];
-  string title = 2 [json_name = "title", (validate.rules).string = {min_len: 1, max_len: 30}];
-  string text = 3;
-  string author = 4 [json_name = "author", (validate.rules).string = {min_len: 1, max_len: 20}];
+  int64 id = 1;
+  UpdateNoteInfo update_info = 2;
 }
 
 message DeleteNoteRequest {
