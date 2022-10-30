@@ -7,11 +7,12 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/MaksMalf/testGrpc/internal/app/api/note_v1"
-	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
 	grpcValidator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+
+	"github.com/MaksMalf/testGrpc/internal/app/api/note_v1"
+	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
 )
 
 type App struct {

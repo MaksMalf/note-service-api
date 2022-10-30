@@ -3,8 +3,9 @@ package note_v1
 import (
 	"context"
 
-	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
 	"google.golang.org/protobuf/types/known/emptypb"
+
+	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
 )
 
 func (i *Implementation) DeleteNote(ctx context.Context, req *pb.DeleteNoteRequest) (*emptypb.Empty, error) {
