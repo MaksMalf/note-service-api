@@ -12,7 +12,7 @@ const (
 	password     = "note-service-password"
 )
 
-type Configer interface {
+type Config interface {
 	GetDBConfig() (string, error)
 	GetGRPCAddress() string
 	GetHTTPAddress() string
@@ -33,19 +33,19 @@ type HTTP struct {
 	Port string `json:"port"`
 }
 
-type Config struct {
+type Configure struct {
 	DB   *DB   `json:"db"`
 	GRPC *GRPC `json:"grpc"`
 	HTTP *HTTP `json:"http"`
 }
 
-func NewConfig(path string) (Configer, error) {
+func NewConfig(path string) (Config, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	config := &Config{}
+	config := &Configure{}
 	err = json.Unmarshal(file, &config)
 	if err != nil {
 		return nil, err
@@ -54,15 +54,15 @@ func NewConfig(path string) (Configer, error) {
 	return config, nil
 }
 
-func (c *Config) GetGRPCAddress() string {
+func (c *Configure) GetGRPCAddress() string {
 	return net.JoinHostPort(c.GRPC.Host, c.GRPC.Port)
 }
 
-func (c *Config) GetHTTPAddress() string {
+func (c *Configure) GetHTTPAddress() string {
 	return net.JoinHostPort(c.HTTP.Host, c.HTTP.Port)
 }
 
-func (c *Config) GetDBConfig() (string, error) {
+func (c *Configure) GetDBConfig() (string, error) {
 	dbDsn := strings.ReplaceAll(c.DB.DSN, dbPassEscSeq, password)
 
 	return dbDsn, nil

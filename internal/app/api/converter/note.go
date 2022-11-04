@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
@@ -77,11 +78,10 @@ func ToUpdateNoteInfo(updateInfo *pb.UpdateNoteInfo) *model.UpdateNoteInfo {
 	}
 }
 
-//
-//func TpPbUpdateNoteInfo(updateInfo *model.UpdateNoteInfo) *pb.UpdateNoteInfo {
-//	return &pb.UpdateNoteInfo{
-//		Title:  wrapperspb.String(updateInfo.Title.String),
-//		Text:   wrapperspb.String(updateInfo.Text.String),
-//		Author: wrapperspb.String(updateInfo.Author.String),
-//	}
-//}
+func TpPbUpdateNoteInfo(updateInfo *model.UpdateNoteInfo) *pb.UpdateNoteInfo {
+	return &pb.UpdateNoteInfo{
+		Title:  wrapperspb.String(updateInfo.Title.String),
+		Text:   wrapperspb.String(updateInfo.Text.String),
+		Author: wrapperspb.String(updateInfo.Author.String),
+	}
+}
