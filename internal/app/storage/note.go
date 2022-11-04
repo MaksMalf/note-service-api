@@ -3,13 +3,19 @@ package storage
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v4"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	"github.com/MaksMalf/testGrpc/internal/pkg/db"
 )
+
+var errNotFound = status.Error(codes.NotFound, "there is no note with this id")
 
 const Note = "note"
 
@@ -86,7 +92,7 @@ func (s *storage) DeleteNote(ctx context.Context, noteID int64) error {
 }
 
 func (s *storage) GetNote(ctx context.Context, noteID int64) (*model.Note, error) {
-	builder := sq.Select("title, text, author").
+	builder := sq.Select("id, title, text, author, created_at, update_at").
 		PlaceholderFormat(sq.Dollar).
 		From(Note).
 		Where(sq.Eq{"id": noteID}).
@@ -102,20 +108,20 @@ func (s *storage) GetNote(ctx context.Context, noteID int64) (*model.Note, error
 		QueryRaw: query,
 	}
 
-	var res []*model.Note
+	var res model.Note
 	err = s.client.DB().GetContext(ctx, &res, q, args...)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("%w", errNotFound)
+		}
 		return nil, err
 	}
-	if len(res) <= 0 {
-		return nil, errors.New("user not found")
-	}
 
-	return res[0], nil
+	return &res, nil
 }
 
 func (s *storage) GetListNote(ctx context.Context) ([]*model.Note, error) {
-	builder := sq.Select("id, title, text, author").
+	builder := sq.Select("id, title, text, author, created_at, update_at").
 		PlaceholderFormat(sq.Dollar).
 		From(Note)
 

@@ -98,7 +98,7 @@ func (a *App) initHTTPHandlers(ctx context.Context) error {
 
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 
-	err := pb.RegisterNoteV1HandlerFromEndpoint(ctx, a.mux, a.serviceProvider.GetConfig().GRPC.GetAddress(), opts)
+	err := pb.RegisterNoteV1HandlerFromEndpoint(ctx, a.mux, a.serviceProvider.GetConfig().GetGRPCAddress(), opts)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (a *App) initHTTPHandlers(ctx context.Context) error {
 }
 
 func (a *App) runGRPC(wg *sync.WaitGroup) error {
-	list, err := net.Listen("tcp", a.serviceProvider.GetConfig().GRPC.GetAddress())
+	list, err := net.Listen("tcp", a.serviceProvider.GetConfig().GetGRPCAddress())
 	if err != nil {
 		return err
 	}
@@ -120,7 +120,7 @@ func (a *App) runGRPC(wg *sync.WaitGroup) error {
 		}
 	}()
 
-	log.Printf("Run gRPC srver on %s host\n", a.serviceProvider.GetConfig().GRPC.GetAddress())
+	log.Printf("Run gRPC srver on %s host\n", a.serviceProvider.GetConfig().GetGRPCAddress())
 	return nil
 }
 
@@ -128,11 +128,11 @@ func (a *App) runHTTP(wg *sync.WaitGroup) error {
 	go func() {
 		defer wg.Done()
 
-		if err := http.ListenAndServe(a.serviceProvider.GetConfig().HTTP.GetAddress(), a.mux); err != nil {
+		if err := http.ListenAndServe(a.serviceProvider.GetConfig().GetHTTPAddress(), a.mux); err != nil {
 			log.Fatalf("failed to process muxer: %s", err.Error())
 		}
 	}()
 
-	log.Printf("Run public http handel on %s host \n", a.serviceProvider.GetConfig().HTTP.GetAddress())
+	log.Printf("Run public http handel on %s host \n", a.serviceProvider.GetConfig().GetHTTPAddress())
 	return nil
 }

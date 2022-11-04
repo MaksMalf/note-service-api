@@ -15,12 +15,7 @@ func (i *Implementation) GetListNote(ctx context.Context, in *emptypb.Empty) (*p
 		return nil, err
 	}
 
-	notes := make([]*pb.Note, 0, len(res))
-	for _, n := range res {
-		notes = append(notes, converter.ToPbNote(n))
-	}
-
 	return &pb.GetListNoteResponce{
-		Notes: notes,
+		Notes: converter.ToPbNotes(res),
 	}, nil
 }

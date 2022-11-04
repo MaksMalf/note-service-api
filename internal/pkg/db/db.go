@@ -3,10 +3,10 @@ package db
 import (
 	"context"
 
-	"github.com/georgysavva/scany/pgxscan"
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Query struct {
@@ -19,11 +19,11 @@ type DB struct {
 }
 
 func (db *DB) GetContext(ctx context.Context, dest any, q Query, args ...any) error {
-	return pgxscan.Get(ctx, db.pool, dest, q.QueryRaw, args)
+	return pgxscan.Get(ctx, db.pool, dest, q.QueryRaw, args...)
 }
 
 func (db *DB) SelectContext(ctx context.Context, dest any, q Query, args ...any) error {
-	return pgxscan.Select(ctx, db.pool, dest, q.QueryRaw, args)
+	return pgxscan.Select(ctx, db.pool, dest, q.QueryRaw, args...)
 }
 
 func (db *DB) ExecContext(ctx context.Context, q Query, args ...any) (pgconn.CommandTag, error) {

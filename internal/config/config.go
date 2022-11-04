@@ -5,14 +5,18 @@ import (
 	"net"
 	"os"
 	"strings"
-
-	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 const (
 	dbPassEscSeq = "{password}"
 	password     = "note-service-password"
 )
+
+type Configer interface {
+	GetDBConfig() (string, error)
+	GetGRPCAddress() string
+	GetHTTPAddress() string
+}
 
 type DB struct {
 	DSN               string `json:"dsn"`
@@ -35,7 +39,7 @@ type Config struct {
 	HTTP *HTTP `json:"http"`
 }
 
-func NewConfig(path string) (*Config, error) {
+func NewConfig(path string) (Configer, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -50,25 +54,16 @@ func NewConfig(path string) (*Config, error) {
 	return config, nil
 }
 
-func (g *GRPC) GetAddress() string {
-	return net.JoinHostPort(g.Host, g.Port)
+func (c *Config) GetGRPCAddress() string {
+	return net.JoinHostPort(c.GRPC.Host, c.GRPC.Port)
 }
 
-func (h *HTTP) GetAddress() string {
-	return net.JoinHostPort(h.Host, h.Port)
+func (c *Config) GetHTTPAddress() string {
+	return net.JoinHostPort(c.HTTP.Host, c.HTTP.Port)
 }
 
-func (c *Config) GetDBConfig() (*pgxpool.Config, error) {
+func (c *Config) GetDBConfig() (string, error) {
 	dbDsn := strings.ReplaceAll(c.DB.DSN, dbPassEscSeq, password)
 
-	poolConfig, err := pgxpool.ParseConfig(dbDsn)
-	if err != nil {
-		return nil, err
-	}
-
-	poolConfig.ConnConfig.BuildStatementCache = nil
-	poolConfig.ConnConfig.PreferSimpleProtocol = true
-	poolConfig.MaxConns = c.DB.MaxOpenConnection
-
-	return poolConfig, nil
+	return dbDsn, nil
 }

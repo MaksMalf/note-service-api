@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Client interface {
@@ -16,8 +16,8 @@ type client struct {
 	closeFunc context.CancelFunc
 }
 
-func NewClient(ctx context.Context, config *pgxpool.Config) (Client, error) {
-	dbc, err := pgxpool.ConnectConfig(ctx, config)
+func NewClient(ctx context.Context, connString string) (Client, error) {
+	dbc, err := pgxpool.New(ctx, connString)
 	if err != nil {
 		return nil, err
 	}
