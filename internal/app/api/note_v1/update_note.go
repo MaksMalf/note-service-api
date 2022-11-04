@@ -2,44 +2,22 @@ package note_v1
 
 import (
 	"context"
-	"fmt"
 
-	pb "github.com/MaksMalf/test_gRPC/pkg/note_v1"
-	sq "github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
+	"github.com/MaksMalf/testGrpc/internal/app/api/model"
+	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (n *Note) UpdateNote(ctx context.Context, req *pb.UpdateNoteRequest) (*pb.UpdateNoteResponce, error) {
-	dbDsn := fmt.Sprintf(
-		"host=%s port=%s dbname=%s user=%s password=%s sslmode=%s",
-		host, port, dbName, dbUser, dbPassword, sslMode,
-	)
-
-	db, err := sqlx.Open("pgx", dbDsn)
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
-
-	builder := sq.Update(noteTable).
-		PlaceholderFormat(sq.Dollar).
-		Set("title", req.GetTitle()).
-		Set("text", req.GetText()).
-		Set("author", req.GetAuthor()).
-		Where(sq.Eq{"id": req.GetId()})
-
-	query, args, err := builder.ToSql()
+func (i *Implementation) UpdateNote(ctx context.Context, req *pb.UpdateNoteRequest) (*emptypb.Empty, error) {
+	err := i.noteService.UpdateNote(ctx, &model.NoteInfo{
+		Id:     req.GetId(),
+		Title:  req.GetTitle(),
+		Text:   req.GetText(),
+		Author: req.GetAuthor(),
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	row, err := db.QueryContext(ctx, query, args...)
-	if err != nil {
-		return nil, err
-	}
-	defer row.Close()
-
-	return &pb.UpdateNoteResponce{
-		NewTitle: "Note is update",
-	}, nil
+	return &emptypb.Empty{}, nil
 }
