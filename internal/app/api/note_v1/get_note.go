@@ -3,6 +3,7 @@ package note_v1
 import (
 	"context"
 
+	"github.com/MaksMalf/testGrpc/internal/app/api/converter"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
 )
 
@@ -13,11 +14,6 @@ func (i *Implementation) GetNote(ctx context.Context, req *pb.GetNoteRequest) (*
 	}
 
 	return &pb.GetNoteResponce{
-		Result: &pb.GetNoteResponce_Note{
-			Id:     res.Id,
-			Title:  res.Title,
-			Text:   res.Text,
-			Author: res.Author,
-		},
+		Note: converter.ToPbNote(res),
 	}, nil
 }
