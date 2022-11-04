@@ -26,18 +26,6 @@ func ToPbNoteInfo(noteInfo *model.NoteInfo) *pb.NoteInfo {
 	}
 }
 
-//func ToNote(note *pb.Note) *model.Note {
-//	return &model.Note{
-//		ID:        note.GetId(),
-//		Info:      ToNoteInfo(note.Info),
-//		CreatedAt: note.GetCreatedAt().AsTime(),
-//		UpdateAt: sql.NullTime{
-//			Time:  note.GetUpdateAt().AsTime(),
-//			Valid: note.GetUpdateAt().IsValid(),
-//		},
-//	}
-//}
-
 func ToPbNote(note *model.Note) *pb.Note {
 	var updateAt *timestamppb.Timestamp
 	if note.UpdateAt.Valid {
