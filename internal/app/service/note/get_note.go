@@ -17,6 +17,7 @@ func (s *Service) GetNote(ctx context.Context, noteID int64) (*model.Note, error
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "note with this id is missing")
 		}
+		return nil, err
 	}
 	return note, nil
 }

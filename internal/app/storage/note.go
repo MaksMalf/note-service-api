@@ -1,5 +1,7 @@
 package storage
 
+//go:generate mockgen --build_flags=--mod=mod -destination=mocks/mocks_note_storage.go -package=mocks . NoteStorage
+
 import (
 	"context"
 	"time"
