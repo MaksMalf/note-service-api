@@ -67,9 +67,27 @@ func ToUpdateNoteInfo(updateInfo *pb.UpdateNoteInfo) *model.UpdateNoteInfo {
 }
 
 func TpPbUpdateNoteInfo(updateInfo *model.UpdateNoteInfo) *pb.UpdateNoteInfo {
+	var (
+		updateTitle  *wrapperspb.StringValue
+		updateText   *wrapperspb.StringValue
+		updateAuthor *wrapperspb.StringValue
+	)
+
+	if updateInfo.Title.Valid {
+		updateTitle = wrapperspb.String(updateInfo.Title.String)
+	}
+
+	if updateInfo.Text.Valid {
+		updateText = wrapperspb.String(updateInfo.Text.String)
+	}
+
+	if updateInfo.Author.Valid {
+		updateAuthor = wrapperspb.String(updateInfo.Author.String)
+	}
+
 	return &pb.UpdateNoteInfo{
-		Title:  wrapperspb.String(updateInfo.Title.String),
-		Text:   wrapperspb.String(updateInfo.Text.String),
-		Author: wrapperspb.String(updateInfo.Author.String),
+		Title:  updateTitle,
+		Text:   updateText,
+		Author: updateAuthor,
 	}
 }

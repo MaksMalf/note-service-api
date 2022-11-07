@@ -18,5 +18,6 @@ func (s *Service) GetNote(ctx context.Context, noteID int64) (*model.Note, error
 			return nil, status.Error(codes.NotFound, "note with this id is missing")
 		}
 	}
+	
 	return note, nil
 }
