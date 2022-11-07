@@ -19,5 +19,6 @@ func (s *Service) GetNote(ctx context.Context, noteID int64) (*model.Note, error
 		}
 		return nil, err
 	}
+	
 	return note, nil
 }
