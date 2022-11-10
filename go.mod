@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/Masterminds/squirrel v1.5.3
+	github.com/brianvoe/gofakeit/v6 v6.19.0
 	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/georgysavva/scany/v2 v2.0.0
 	github.com/golang/mock v1.6.0
@@ -18,7 +19,6 @@ require (
 )
 
 require (
-	github.com/brianvoe/gofakeit/v6 v6.19.0 // indirect
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gofrs/uuid v4.3.0+incompatible // indirect
