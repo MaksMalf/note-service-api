@@ -10,6 +10,7 @@ import (
 	grpcValidator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/MaksMalf/testGrpc/internal/app/api/note_v1"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
@@ -96,7 +97,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 func (a *App) initHTTPHandlers(ctx context.Context) error {
 	a.mux = runtime.NewServeMux()
 
-	opts := []grpc.DialOption{grpc.WithInsecure()}
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
 	err := pb.RegisterNoteV1HandlerFromEndpoint(ctx, a.mux, a.serviceProvider.GetConfig().GetGRPCAddress(), opts)
 	if err != nil {
