@@ -3,11 +3,10 @@ package converter
 import (
 	"database/sql"
 
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"google.golang.org/protobuf/types/known/wrapperspb"
-
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func ToNoteInfo(noteInfo *pb.NoteInfo) *model.NoteInfo {

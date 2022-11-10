@@ -6,10 +6,9 @@ import (
 	"context"
 	"time"
 
-	sq "github.com/Masterminds/squirrel"
-
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	"github.com/MaksMalf/testGrpc/internal/pkg/db"
+	sq "github.com/Masterminds/squirrel"
 )
 
 const Note = "note"

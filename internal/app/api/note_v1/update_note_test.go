@@ -6,15 +6,14 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/brianvoe/gofakeit/v6"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/require"
-	"google.golang.org/protobuf/types/known/wrapperspb"
-
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	"github.com/MaksMalf/testGrpc/internal/app/service/note"
 	noteMocks "github.com/MaksMalf/testGrpc/internal/app/storage/mocks"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
+	"github.com/brianvoe/gofakeit/v6"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func TestUpdateNote(t *testing.T) {

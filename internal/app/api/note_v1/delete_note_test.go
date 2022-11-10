@@ -5,13 +5,12 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/brianvoe/gofakeit/v6"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/require"
-
 	"github.com/MaksMalf/testGrpc/internal/app/service/note"
 	noteMocks "github.com/MaksMalf/testGrpc/internal/app/storage/mocks"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
+	"github.com/brianvoe/gofakeit/v6"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDeleteNote(t *testing.T) {

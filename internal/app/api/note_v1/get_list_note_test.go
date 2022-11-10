@@ -5,18 +5,16 @@ import (
 	"database/sql"
 	"errors"
 	"testing"
-	"time"
-
-	"github.com/brianvoe/gofakeit/v6"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/require"
-	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	"github.com/MaksMalf/testGrpc/internal/app/service/note"
 	noteMocks "github.com/MaksMalf/testGrpc/internal/app/storage/mocks"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
+	"github.com/brianvoe/gofakeit/v6"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func TestGetListNote(t *testing.T) {
@@ -28,14 +26,12 @@ func TestGetListNote(t *testing.T) {
 		title    = gofakeit.JobTitle()
 		text     = gofakeit.BeerStyle()
 		author   = gofakeit.Name()
-		createAt = time.Now()
+		createAt = gofakeit.Date()
 		updateAt = sql.NullTime{
-			Time:  time.Time{},
+			Time:  gofakeit.Date(),
 			Valid: true,
 		}
 		storeErrText = gofakeit.Phrase()
-
-		req = &emptypb.Empty{}
 
 		validRes = &pb.GetListNoteResponce{
 			Notes: []*pb.Note{
@@ -99,13 +95,13 @@ func TestGetListNote(t *testing.T) {
 	})
 
 	t.Run("success case", func(t *testing.T) {
-		res, err := api.GetListNote(ctx, req)
+		res, err := api.GetListNote(ctx, &emptypb.Empty{})
 		require.Nil(t, err)
 		require.Equal(t, validRes, res)
 	})
 
 	t.Run("note store err", func(t *testing.T) {
-		_, err := api.GetListNote(ctx, req)
+		_, err := api.GetListNote(ctx, &emptypb.Empty{})
 		require.NotNil(t, err)
 		require.Equal(t, storeErrText, err.Error())
 	})
