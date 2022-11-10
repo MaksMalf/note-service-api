@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/MaksMalf/testGrpc/internal/app/api/converter"
@@ -16,7 +17,7 @@ import (
 const adress = "localhost:50051"
 
 func main() {
-	con, err := grpc.Dial(adress, grpc.WithInsecure())
+	con, err := grpc.Dial(adress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("didn't connect: %s", err.Error())
 	}
