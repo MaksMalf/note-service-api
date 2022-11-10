@@ -1,13 +1,14 @@
 package storage
 
+//go:generate mockgen --build_flags=--mod=mod -destination=mocks/mocks_note_storage.go -package=mocks . NoteStorage
+
 import (
 	"context"
 	"time"
 
-	sq "github.com/Masterminds/squirrel"
-
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	"github.com/MaksMalf/testGrpc/internal/pkg/db"
+	sq "github.com/Masterminds/squirrel"
 )
 
 const Note = "note"

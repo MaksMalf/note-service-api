@@ -3,10 +3,9 @@ package note_v1
 import (
 	"context"
 
-	"google.golang.org/protobuf/types/known/emptypb"
-
 	"github.com/MaksMalf/testGrpc/internal/app/api/converter"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (i *Implementation) UpdateNote(ctx context.Context, req *pb.UpdateNoteRequest) (*emptypb.Empty, error) {
