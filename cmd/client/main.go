@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 
 	"github.com/MaksMalf/testGrpc/internal/app/api/converter"
@@ -15,7 +16,7 @@ import (
 const adress = "localhost:50051"
 
 func main() {
-	con, err := grpc.Dial(adress, grpc.WithInsecure())
+	con, err := grpc.Dial(adress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("didn't connect: %s", err.Error())
 	}

@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net"
 	"net/http"
@@ -95,7 +96,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 func (a *App) initHTTPHandlers(ctx context.Context) error {
 	a.mux = runtime.NewServeMux()
 
-	opts := []grpc.DialOption{grpc.WithInsecure()}
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
 	err := pb.RegisterNoteV1HandlerFromEndpoint(ctx, a.mux, a.serviceProvider.GetConfig().GetGRPCAddress(), opts)
 	if err != nil {
