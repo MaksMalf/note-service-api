@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"database/sql"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 
 	"github.com/MaksMalf/testGrpc/internal/app/api/converter"
 	"github.com/MaksMalf/testGrpc/internal/app/api/model"
 	pb "github.com/MaksMalf/testGrpc/pkg/note_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
